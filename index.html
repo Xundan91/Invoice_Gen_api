@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Invoice</title>
+</head>
+<body>
+    <h1>Generate Invoice</h1>
+    <form id="invoice-form">
+        <label for="from">From:</label>
+        <input type="text" id="from" name="from" required><br><br>
+
+        <label for="to">To:</label>
+        <input type="text" id="to" name="to" required><br><br>
+
+        <label for="logo">Logo URL:</label>
+        <input type="url" id="logo" name="logo"><br><br>
+
+        <label for="number">Invoice Number:</label>
+        <input type="number" id="number" name="number" required><br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" required><br><br>
+
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br><br>
+
+        <label for="unitCost">Unit Cost:</label>
+        <input type="number" id="unitCost" name="unitCost" required><br><br>
+
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes"></textarea><br><br>
+
+        <label for="terms">Terms:</label>
+        <textarea id="terms" name="terms"></textarea><br><br>
+
+        <button type="submit">Generate Invoice</button>
+    </form>
+
+    <script>
+        document.getElementById('invoice-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                from: document.getElementById('from').value,
+                to: document.getElementById('to').value,
+                logo: document.getElementById('logo').value,
+                number: document.getElementById('number').value,
+                date: document.getElementById('date').value,
+                due_date: document.getElementById('due_date').value,
+                items: [{
+                    name: document.getElementById('itemName').value,
+                    quantity: document.getElementById('quantity').value,
+                    unit_cost: document.getElementById('unitCost').value
+                }],
+                notes: document.getElementById('notes').value,
+                terms: document.getElementById('terms').value
+            };
+
+            const response = await fetch('http://localhost:3000/generate-invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Download PNG
+                const a = document.createElement('a');
+                a.href = data.pngUrl;
+                a.download = 'invoice.png';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+
+                // Download PDF
+                const b = document.createElement('a');
+                b.href = data.pdfUrl;
+                b.download = 'invoice.pdf';
+                document.body.appendChild(b);
+                b.click();
+                b.remove();
+            } else {
+                alert('Failed to generate invoice');
+            }
+        });
+    </script>
+</body>
+</html>
