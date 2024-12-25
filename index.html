@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Invoice</title>
+    <title>Finbills with no Csss</title>
 </head>
 <body>
     <h1>Generate Invoice</h1>
@@ -75,7 +75,7 @@
             if (response.ok) {
                 const data = await response.json();
 
-                // Download PNG
+            
                 const a = document.createElement('a');
                 a.href = data.pngUrl;
                 a.download = 'invoice.png';
@@ -83,7 +83,7 @@
                 a.click();
                 a.remove();
 
-                // Download PDF
+                
                 const b = document.createElement('a');
                 b.href = data.pdfUrl;
                 b.download = 'invoice.pdf';
