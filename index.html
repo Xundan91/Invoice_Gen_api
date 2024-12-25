@@ -64,7 +64,7 @@
                 terms: document.getElementById('terms').value
             };
 
-            const response = await fetch('http://localhost:3000/generate-invoice', {
+            const response = await fetch('https://invoice-gen-api.onrender.com/generate-invoice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

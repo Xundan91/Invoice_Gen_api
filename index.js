@@ -77,7 +77,7 @@ app.post('/generate-invoice', async (req, res) => {
     `;
 
     try {
-        fs.writeFileSync('invoice-debug.html', invoiceHtml); 
+        // fs.writeFileSync('invoice-debug.html', invoiceHtml); 
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -87,7 +87,7 @@ app.post('/generate-invoice', async (req, res) => {
         await page.screenshot({ path: `invoice-${number}.png`, fullPage: true }); 
 
      
-        const pngBytes = fs.readFileSync(`invoice-${number}.png`);
+        // const pngBytes = fs.readFileSync(`invoice-${number}.png`);
         const pdfDoc = await PDFDocument.create();
         const pngImage = await pdfDoc.embedPng(pngBytes);
         
@@ -97,7 +97,7 @@ app.post('/generate-invoice', async (req, res) => {
         const pdfBytes = await pdfDoc.save();
         await browser.close();
 
-        fs.writeFileSync(`invoice-${number}.pdf`, pdfBytes); 
+        // fs.writeFileSync(`invoice-${number}.pdf`, pdfBytes); 
 
         res.json({
             pngUrl: `/invoice-${number}.png`,
