@@ -3,37 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finbills Invoice Generator</title>
-    <style>
-        
-        body {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-        form {
-            display: grid;
-            gap: 10px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-        }
-        button {
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-    </style>
+    <title>Finbills with no Csss</title>
 </head>
 <body>
-    <!-- Your existing form HTML -->
+    <h1>Generate Invoice</h1>
+    <form id="invoice-form">
+        <label for="from">From:</label>
+        <input type="text" id="from" name="from" required><br><br>
+
+        <label for="to">To:</label>
+        <input type="text" id="to" name="to" required><br><br>
+
+        <label for="logo">Logo URL:</label>
+        <input type="url" id="logo" name="logo"><br><br>
+
+        <label for="number">Invoice Number:</label>
+        <input type="number" id="number" name="number" required><br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" required><br><br>
+
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" name="itemName" required><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required><br><br>
+
+        <label for="unitCost">Unit Cost:</label>
+        <input type="number" id="unitCost" name="unitCost" required><br><br>
+
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes"></textarea><br><br>
+
+        <label for="terms">Terms:</label>
+        <textarea id="terms" name="terms"></textarea><br><br>
+
+        <button type="submit">Generate Invoice</button>
+    </form>
 
     <script>
         document.getElementById('invoice-form').addEventListener('submit', async (e) => {
@@ -48,61 +57,43 @@
                 due_date: document.getElementById('due_date').value,
                 items: [{
                     name: document.getElementById('itemName').value,
-                    quantity: parseInt(document.getElementById('quantity').value),
-                    unit_cost: parseFloat(document.getElementById('unitCost').value)
+                    quantity: document.getElementById('quantity').value,
+                    unit_cost: document.getElementById('unitCost').value
                 }],
                 notes: document.getElementById('notes').value,
                 terms: document.getElementById('terms').value
             };
 
-            try {
-                const response = await fetch('https://invoice-gen-api.onrender.com/generate-invoice', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
+            const response = await fetch('https://invoice-gen-api.onrender.com/generate-invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
+            if (response.ok) {
+                const data = await response.json();
 
-                    // Download PNG
-                    const pngBlob = base64ToBlob(data.png, 'image/png');
-                    downloadFile(pngBlob, `invoice-${formData.number}.png`);
+            
+                const a = document.createElement('a');
+                a.href = data.pngUrl;
+                a.download = 'invoice.png';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
 
-                    // Download PDF
-                    const pdfBlob = base64ToBlob(data.pdf, 'application/pdf');
-                    downloadFile(pdfBlob, `invoice-${formData.number}.pdf`);
-                } else {
-                    alert('Failed to generate invoice');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error generating invoice');
+                
+                const b = document.createElement('a');
+                b.href = data.pdfUrl;
+                b.download = 'invoice.pdf';
+                document.body.appendChild(b);
+                b.click();
+                b.remove();
+            } else {
+                alert('Failed to generate invoice');
             }
         });
-
-        function base64ToBlob(base64, type) {
-            const binStr = atob(base64);
-            const len = binStr.length;
-            const arr = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                arr[i] = binStr.charCodeAt(i);
-            }
-            return new Blob([arr], { type: type });
-        }
-
-        function downloadFile(blob, filename) {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            a.remove();
-        }
     </script>
 </body>
 </html>

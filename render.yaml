@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: invoice-generator
+    env: node
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: true
+    buildFilter:
+      paths:
+        - package.json
+        - index.js
+        - public/**
