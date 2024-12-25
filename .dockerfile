@@ -1,6 +1,5 @@
 FROM node:16-slim
 
-# Install Chrome dependencies
 RUN apt-get update \
     && apt-get install -y wget gnupg \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
@@ -10,20 +9,18 @@ RUN apt-get update \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Create working directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+COPY package-lock.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy source
-COPY . .
+COPY public/ ./public/
+COPY index.js ./
+COPY .env ./
+COPY render.yaml ./
 
-# Expose port
 EXPOSE 3000
 
-# Start command
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
