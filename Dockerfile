@@ -18,7 +18,7 @@ RUN npm install
 
 COPY public/ ./public/
 COPY index.js ./
-COPY .env ./
+# COPY .env ./
 COPY render.yaml ./
 
 EXPOSE 3000
